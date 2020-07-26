@@ -1,0 +1,110 @@
+
+## Part 2: Feature Selection
+
+
+
+METRIC OF SUCCESS
+Trying to predict Totals while using only the most important features ehich will be derived by the t-sne algorithm
+
+##loading our dataset
+```{r}
+sales
+head(sales)
+```
+
+
+```{r}
+# Installing and loading the corrplot package for plotting
+# ---
+# 
+suppressWarnings(
+        suppressMessages(if
+                         (!require(corrplot, quietly=TRUE))
+                install.packages("corrplot")))
+library(corrplot)
+```
+
+
+```{r}
+salesdf <- sales[c(2:8,10,11)]
+head(salesdf)
+```
+
+
+```{r}
+install.packages("dplyr")
+library(dplyr)
+install.packages("caret")
+library(caret)
+```
+
+
+```{r}
+## Label encoding our categorical variables
+Branch <- as.numeric(sales$Branch)
+Customer.type <- as.numeric(sales$Customer.type)
+Gender <- as.numeric(sales$Gender)
+Product.line <- as.numeric(sales$Product.line)
+Payment <- as.numeric(sales$payment)
+```
+
+# Next we merger our converted dataframe to the dataframe left with numeric columns
+
+```{r}
+salesdf <- cbind(Branch,Customer.type,Gender,Product.line,Payment)
+head(salesdf)
+```
+
+## Get the numerical data
+
+```{r}
+num <- select_if(sales,is.numeric)
+num
+
+```
+## Merge the two dataframes(Encoded categorical and numerical)
+
+```{r}
+newsales <- merge(num,salesdf)
+head(newsales)
+```
+
+```R
+# Calculating the correlation matrix
+# ---
+#
+correlationMatrix <- cor(newsales)
+
+# Find attributes that are highly correlated
+# ---
+#
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
+
+# Highly correlated attributes
+# ---
+# 
+highlyCorrelated
+
+names(newsales[,highlyCorrelated])
+
+```
+
+
+```R
+# We can remove the variables with a higher correlation 
+# and comparing the results graphically as shown below
+# ---
+# 
+# Removing Redundant Features 
+# ---
+# 
+newsales2 <- newsales[-highlyCorrelated]
+
+# Performing our graphical comparison
+# ---
+# 
+par(mfrow = c(1, 2))
+corrplot(correlationMatrix, order = "hclust")
+corrplot(cor(newsales2), order = "hclust")
+
+```

@@ -1,0 +1,129 @@
+
+## Part 3: Association Rules
+
+
+METRIC OF SUCCESS
+Build an algotithm/model that is able to predict what a customer is going to buy from their previous purchases
+
+
+## Loading our dataset
+
+
+```{r}
+head(Supermkt)
+
+```
+
+```R
+# Then we install the required arules library 
+#
+install.packages("arules")
+library(arules)
+```
+#Reloading our dataset as transactions
+
+```{r}
+path <- "http://bit.ly/SupermarketDatasetII"
+Transactions<-read.transactions(path, sep = ",")
+Transactions
+
+```
+
+
+```R
+# Verifying the object's class
+# ---
+# This should show us transactions as the type of data that we will need
+# ---
+# 
+class(Transactions)
+```
+
+```R
+# Previewing our first 10 transactions
+#
+inspect(Transactions[1:10])
+```
+
+```R
+# previewingcitems that make up our dataset,
+# 
+# ---
+# 
+items<-as.data.frame(itemLabels(Transactions))
+colnames(items) <- "Item"
+head(items, 10)    
+```
+```{r}
+#Geberating summary of the transactions 
+
+summary(Transactions)
+```
+
+
+```{r}
+# Exploring the frequency of some articles 
+# and getting percentage comparison to the total transactions
+# 
+itemFrequency(Transactions[, 8:10],type = "absolute")
+round(itemFrequency(Transactions[, 8:10],type = "relative")*100,2)
+```
+Here we can infer that the products are between the 8th and the 10th transaction 
+are the one below while black tea is purchased most making 1.43% of total purchases
+
+
+
+```R
+# Producing a chart of frequencies and filtering 
+# to consider only items with a minimum percentage 
+# of support/ considering a top x of items
+# ---
+# Displaying top 10 most common items in the transactions dataset 
+# and the items whose relative importance is at least 10%
+# 
+par(mfrow = c(1, 2))
+
+# plot the frequency of items
+itemFrequencyPlot(Transactions, topN = 10,col="darkgreen")
+itemFrequencyPlot(Transactions, support = 0.1,col="darkred")
+```
+The plots are quite congested hence we are not able to gain much insight from them but we can see different items and their frequency of purchase 
+
+
+```{r}
+```R
+# Building a model based on association rules 
+# using the apriori function 
+# ---
+# We use Min Support as 0.001 and confidence as 0.9
+# ---
+# 
+rules <- apriori (Transactions, parameter = list(supp = 0.001, conf = 0.9))
+rules
+
+```
+```
+Our model got us a total of 11 rules this is because we used a high confidence interval 
+which is optimal to ensure we have a right amount of rules that we can work with
+
+## Nxet we try get the summary of these rules we got
+
+```{r}
+summary(rules)
+```
+
+
+```R
+# Observing rules built in our model i.e. first 5 model rules
+# ---
+# 
+inspect(rules[1:5])
+
+
+From the inspection above we can conclude that with a 95%confidence interval if 
+a customer buys red wine and soup they are also highly likely to buy mineral water
+this insight can help supermarkets buy making sure these aisles are close to each other 
+to easily capture these customers
+
+
+

@@ -1,0 +1,91 @@
+## Part 1: Dimensionality Reduction
+
+
+DEFINE THE QUESTION
+You are a Data analyst at Carrefour Kenya and are currently undertaking a project that will inform the marketing department on the most relevant marketing strategies that will result in the highest no. of sales (total price including tax). Your project has been divided into four parts where you'll explore a recent marketing dataset by performing various unsupervised learning techniques and later providing recommendations based on your insights.
+METRIC OF SUCCESS
+Enabling ourselves to perform dimensionality reduction and use only the most important features to gather insights on the supermarkets Totals in revenue
+DATA UNDERSTANDING
+The data has 1000 rows and 16 columns varying of both numerical and categorical variables
+DATA RELEVANCE
+The data is relevant for carrying out our analysis it lacks missing values and it is very informative with needed columns and varibales
+
+##calling the loaded dataset
+```{r}
+sales
+```
+##viewing the top of the dataset
+```{r}
+head(sales)
+```
+
+##Data cleaning
+
+```{r}
+###Check for missing values
+colSums(is.na(sales))
+
+```
+our data has no null vales
+
+
+In the case of this data we have we shll not remove outliers because all the data is required to impliment our algorithm models
+
+
+
+DATA ANALYSIS
+# For the analysis we will carry out both Univeriet and Bivariet ,also we will try make plots to het a general overview of our factors in the dataset
+
+We will start by analysing numerical columns
+
+
+
+
+## Implementing the solution using t-sne
+
+Installing the packages and loading the necessary libraries
+
+
+```{r}
+install.packages("Rtsne")
+library(Rtsne)
+```
+
+
+# Curating the dtaatbase for analysis
+
+
+```{r}
+Total <- sales$Total
+sales$Total <- as.factor(sales$Total)
+```
+## Then we plot
+
+```{r}
+colors = rainbow(length(unique(sales$Total)))
+names(colors) = unique(sales$Total) 
+
+```
+
+#Execution of our tsne algorithm
+
+```{r}
+# Executing the algorithm on curated data
+# 
+tsne <- Rtsne(sales[,-1], dims = 2, perplexity=30, verbose=TRUE, max_iter = 500)
+
+# Getting the duration of execution
+# 
+exeTimeTsne <- system.time(Rtsne(sales[,-1], dims = 2, perplexity=30, verbose=TRUE, max_iter = 500))
+
+```
+# Then we plot the results of the algorithm
+
+```{r}
+# Plotting our graph and closely examining the graph
+# 
+plot(tsne$Y, t='n', main="tsne")
+text(tsne$Y, labels=sales$Total, col=colors[sales$Total])
+
+```
+

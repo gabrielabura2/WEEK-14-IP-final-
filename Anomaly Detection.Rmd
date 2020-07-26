@@ -1,0 +1,54 @@
+
+## Part 4: Anomaly Detection
+
+
+METRIC OF SUCCCESS
+Being able to show any anomalies in the total sales throughout the months , this will help 
+in fraud detection in the supermarket
+
+
+
+
+Loading the data
+
+```{r}
+head(forecast)
+
+```
+```R
+# Installing anomalize package
+# ---
+# 
+install.packages("anomalize")
+install.packages("tidyverse")
+```
+
+
+```R
+# Load tidyverse and anomalize
+# ---
+# 
+library(tidyverse)
+library(anomalize)
+
+```
+
+```{r}
+# Collect our time series data
+# ---
+# 
+tidyverse_cran_downloads
+```
+
+```
+## Detecting our anomalies
+
+```{r}
+tidyverse_cran_downloads %>%
+    time_decompose(count) %>%
+    anomalize(remainder) %>%
+    time_recompose() %>%
+    plot_anomalies(time_recomposed = TRUE, ncol = 4, alpha_dots = 0.5)
+```
+The plots below basically shows the total sales throughout the months from 2017 to 2018 
+then our algorithm showed us the anomalies in sales which is visaulized by the red marks on the plots
